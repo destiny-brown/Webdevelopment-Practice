@@ -3,8 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <title>practice</title>
+    <style>
+        h1{
+            color: mediumaquamarine;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-This is the body of the text
+
+<h1>This is a heading</h1>
+<h1>This is another heading</h1>
+
+An ordered list:
+<ol>
+    <li>food</li>
+    <li>beer</li>
+    <li>coffee</li>
+</ol>
+
+An unordered list:
+<ul>
+    <li>phone</li>
+    <li>laptop</li>
+    <li>tablet</li>
+</ul>
+
+<table>
+    <thead>
+    <tr>
+        <th>Ocean</th>
+        <th>Average depth</th>
+        <th>Maximum depth</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>Pacific Ocean</td>
+    <td>4280</td>
+    <td>10,911</td>
+    </tr>
+    <tr>
+        <td>Atlantic Ocean</td>
+        <td>3,646</td>
+        <td>8,468</td>
+
+    </tr>
+    </tbody>
+</table>
+<form>
+    <input type="text" placeholder="Full name" name = "full_name">
+    <input type="submit">
+</form>
+
+<form>
+    <div>
+        <input type="text" placeholder="Name" name="Name">
+        <input name="password" type="password" placeholder="Password">
+    </div>
+
+    <div>
+        Favourite color?
+        <input type="radio" name="color" value="blue">Blue
+        <input type="radio" name="color" value="red">Red
+        <input type="radio" name="color" value="green">Green
+    </div>
+
+    <div>
+        <input name="country" list="countries" placeholder="Country">
+        <datalist id="countries">
+            <option value="Afghanistan">
+            <option value="Albania">
+            <option value="Algeria">
+            <option value="Andorra">
+        </datalist>
+
+    </div>
+</form>
 </body>
 </html>
