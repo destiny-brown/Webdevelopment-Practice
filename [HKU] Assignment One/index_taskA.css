@@ -15,3 +15,9 @@ h1{
     }
 
 }
+
+.taskA{
+    border: blue;
+    border-width: 5px;
+    border-style: double;
+}
