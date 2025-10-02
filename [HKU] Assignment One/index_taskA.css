@@ -20,4 +20,6 @@ h1{
     border: blue;
     border-width: 5px;
     border-style: double;
+    min-height: 100px;
+    max-height: 500px;
 }
