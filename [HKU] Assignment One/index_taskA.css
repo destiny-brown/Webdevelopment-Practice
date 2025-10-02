@@ -1,3 +1,17 @@
 h1{
     text-align: center;
 }
+
+@media (min-width: 800px) {
+    .taskA{
+        width: 90%;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 799px){
+    .taskA{
+        width: 100%;
+    }
+
+}
