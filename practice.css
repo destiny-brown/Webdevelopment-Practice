@@ -2,3 +2,91 @@ h1{
     color: mediumaquamarine;
     text-align: center;
 }
+
+div{
+    padding: 20px;
+    margin: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    border: 3px solid crimson;
+}
+
+#entry{
+    padding: 20px;
+    margin: 30px;
+    font-family: Arial, sans-serif;
+    font-size: 40px;
+}
+
+table{
+    border: 3px solid cadetblue;
+    border-collapse: collapse;/*This is so that the outer border line is not different from the cell border lines,
+     make it look like a normal table*/
+}
+
+td, th{
+    border: 2px solid cadetblue;
+    padding: 5px;
+}
+
+
+a{
+    color: chocolate;
+}
+
+a[href="https://twitter.com"]{
+    color: aqua;
+}
+
+button{
+    width: 200px;
+    height: 50px;
+    font-size: 24px;
+    background-color: aquamarine;
+}
+
+button:hover{
+    background-color: blueviolet;
+}
+
+/*@media (min-width: 600px) {*/
+/*    body{*/
+/*        background-color: red;*/
+/*    }*/
+/*}*/
+
+/*@media (max-width: 599px) {*/
+/*    body{background-color: chocolate;*/
+/*    }*/
+/*}*/
+
+#container{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#container > div{
+    background-color: springgreen;
+    font-size: 20px;
+    margin: 20px;
+    padding: 20px;
+    width: 200px;
+} /*The divs inside the container*/
+
+#grid{
+    background-color: green;
+    display: grid;
+    padding: 20px;
+    /*How much space between columns and rows*/
+    grid-column-gap: 20px;
+    grid-row-gap: 10px;
+    grid-template-columns: 300px 300px auto; /*The size of the columns*/
+}
+
+.grid-item{
+    background-color: white;
+     font-size: 20px;
+    padding: 10px;
+    text-align: center;
+}
