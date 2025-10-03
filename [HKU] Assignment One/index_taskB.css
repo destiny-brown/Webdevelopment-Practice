@@ -26,7 +26,6 @@ tr {
     position: relative;
 }
 
-/* Add horizontal arrows to ALL items except the last one */
 tr:not(:last-child)::after {
     content: '';
     position: absolute;
