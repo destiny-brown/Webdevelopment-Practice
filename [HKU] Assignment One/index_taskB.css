@@ -1,0 +1,85 @@
+h1 {
+    text-align: center;
+}
+
+table {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    background: transparent !important;
+    position: relative;
+}
+
+tbody {
+    display: contents;
+}
+
+tr {
+    display: flex;
+    flex-direction: column;
+    background: #eef3f7;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    height: fit-content;
+    position: relative;
+}
+
+/* Add horizontal arrows to ALL items except the last one */
+tr:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-left: 20px solid #eef3f7;
+    z-index: 2;
+}
+
+td {
+    display: block;
+    width: 100% !important;
+    border: none !important;
+    padding: 8px 0;
+}
+
+td:first-child {
+    font-weight: bold;
+    font-size: 1.3em;
+    color: #2c3e50;
+    border-bottom: 2px solid #b8c2cc;
+    padding-bottom: 12px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+body{
+    padding: 50px;
+}
+
+@media (min-width: 750px) and (max-width: 1199px) {
+    width: 100%;
+}
+
+@media (min-width: 1200px) and (max-width: 1499px){
+    width: 90%;
+    margin: 0 auto;
+}
+
+@media (min-width: 1500px) {
+    width: 80%;
+    margin: 0 auto;
+}
+
+@media (max-width: 749px) {
+    tr:not(:last-child)::after{
+        content: none;
+    }
+}
+
+
