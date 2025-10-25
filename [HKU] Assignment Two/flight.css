@@ -5,3 +5,19 @@
   }
 }
 
+@media (min-width: 1000px){
+    .tileInput {
+        width: 1200px;
+        border: 1px solid blue;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+    }
+    #InputForm {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
