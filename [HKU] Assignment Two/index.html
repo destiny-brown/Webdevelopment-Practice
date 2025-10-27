@@ -11,16 +11,19 @@
         <div class="titleInput">
             <h1>Hong Kong International Airport</h1>
             <h1>Passenger Flight Information</h1>
+            <div id="alertMessage" ></div>
             <form id="InputForm">
                 <label>
                     Date of Flight:
-                    <input type="date" name="flightDate" />
+                    <input type="date" id="flightDate" name="flightDate" required />
                     <button>Search</button>
                 </label>
             </form>
         </div>
-        <div id="flightInfo"></div>
-        <div id="iataInfo"></div>
-
+        <h2 id="dateHeader"></h2>
+        <p id="flightCounts"></p>
+        <p id="iataCounts"></p>
+        <pre id="flightInfo"></pre>
+        <pre id="iataInfo"></pre>
 	</body>
 </html>

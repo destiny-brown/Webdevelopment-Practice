@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Date Range Picker</title>
+    <style>
+        #InputForm {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            padding: 20px;
+        }
+        #InputForm input,
+        #InputForm button {
+            padding: 8px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <form id="InputForm">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" min="2025-07-27" max="2025-10-25" required>
+
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate" min="2025-07-27" max="2025-10-25" required>
+
+        <button type="submit">Search</button>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const startDate = document.getElementById("startDate");
+            const endDate = document.getElementById("endDate");
+
+            startDate.addEventListener("change", function () {
+                endDate.min = startDate.value;
+            });
+
+            endDate.addEventListener("change", function () {
+                startDate.max = endDate.value;
+            });
+
+            document.getElementById("InputForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                alert(`Searching flights from ${startDate.value} to ${endDate.value}`);
+            });
+        });
+    </script>
+</body>
+</html>

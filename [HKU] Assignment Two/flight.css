@@ -1,19 +1,27 @@
-@media (min-width: 350px) and (max-width: 500px){
-  width: 100%;
-  #tileInput {
-      align-content: center;
-  }
+body{
+    background-color: white;
 }
 
-@media (min-width: 1000px){
-    .tileInput {
-        width: 1200px;
-        border: 1px solid blue;
-        box-sizing: border-box;
+@media (min-width: 350px) and (max-width: 500px){
+    .titleInput{
+        width: 100%;
+        margin: 0 auto;
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 1000px){
+    .titleInput {
+        width: 1200px;
         margin: 0 auto;
+        box-sizing: border-box;
+        background-color: #e0efef;
+        display: flex;
+        flex-direction: column;
+
     }
     #InputForm {
         display: flex;
