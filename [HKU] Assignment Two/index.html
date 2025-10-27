@@ -1,29 +1,72 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>2025-26 COMP3322 Assignment Two</title>
-        <script src="flight.js"></script>
-        <link rel="stylesheet" href="flight.css">
-	</head>
-	<body>
-        <div class="titleInput">
-            <h1>Hong Kong International Airport</h1>
-            <h1>Passenger Flight Information</h1>
-            <div id="alertMessage" ></div>
-            <form id="InputForm">
-                <label>
-                    Date of Flight:
-                    <input type="date" id="flightDate" name="flightDate" required />
-                    <button>Search</button>
-                </label>
-            </form>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>2025-26 COMP3322 Assignment Two</title>
+    <link rel="stylesheet" href="flight.css" />
+</head>
+<body>
+<main class="container">
+    <h1>Hong Kong International Airport</h1>
+    <h1>Passenger Flight Information</h1>
+
+    <!-- Custom alert area -->
+    <div id="alert" class="alert" role="alert" aria-live="polite"></div>
+
+    <!-- Date form -->
+    <form id="reportForm" novalidate>
+        <label for="reportDate">Date of Flight</label>
+        <input id="reportDate" name="reportDate" type="date" required />
+        <button type="submit" id="searchBtn">Search</button>
+    </form>
+
+    <!-- Results -->
+    <section id="results" class="hidden">
+        <header id="reportHeader"></header>
+
+        <div class="cards">
+            <div class="card">
+                <h3>Summary</h3>
+                <ul id="summaryList"></ul>
+            </div>
+
+            <div class="card">
+                <h3>Special Cases (Departures)</h3>
+                <ul id="specialDepartures"></ul>
+            </div>
+
+            <div class="card">
+                <h3>Special Cases (Arrivals)</h3>
+                <ul id="specialArrivals"></ul>
+            </div>
         </div>
-        <h2 id="dateHeader"></h2>
-        <p id="flightCounts"></p>
-        <p id="iataCounts"></p>
-        <pre id="flightInfo"></pre>
-        <pre id="iataInfo"></pre>
-	</body>
+
+        <div class="cards">
+            <div class="card">
+                <h3>Departure Histogram</h3>
+                <div id="depHistogram" class="histogram"></div>
+            </div>
+
+            <div class="card">
+                <h3>Arrival Histogram</h3>
+                <div id="arrHistogram" class="histogram"></div>
+            </div>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <h3>Top 10 Destinations (Departures)</h3>
+                <ol id="topDestinations"></ol>
+            </div>
+
+            <div class="card">
+                <h3>Top 10 Origins (Arrivals)</h3>
+                <ol id="topOrigins"></ol>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="flight.js"></script>
+</body>
 </html>
