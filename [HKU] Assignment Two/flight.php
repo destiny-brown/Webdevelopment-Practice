@@ -11,7 +11,7 @@
     http_response_code(400);
     echo "{\"problemNo\":\"xxxxxxxxxxxxxx\",\"message\":\"invalid query string\"}";
     exit();
-  } 
+  }
   if (isset($_GET['lang']))
     $lang=urlencode($_GET['lang']);
   if (isset($_GET['cargo']))
@@ -19,11 +19,11 @@
   if (isset($_GET['arrival']))
     $arrival=urlencode($_GET['arrival']);
   if (isset($_GET['date'])) {
-    $date=urlencode($_GET['date']);  
+    $date=urlencode($_GET['date']);
   } else {
     http_response_code(400);
     echo "{\"problemNo\":\"xxxxxxxxxxxxxx\",\"message\":\"must provide a date string\"}";
-    exit();    
+    exit();
   }
 
   $opts = array(
