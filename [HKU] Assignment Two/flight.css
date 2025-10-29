@@ -10,40 +10,70 @@ body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helve
 /*h1 { margin-bottom: 12px; }*/
 .hidden { display: none; }
 
+/* Small screens: 350px to 500px */
 @media (min-width: 350px) and (max-width: 500px) {
     .container{
         width: 100%;
         background-color: #e0efef;
         padding: 1rem;
     }
+
     #title{
         display: flex;
         flex-direction: column;
-        justify-content: center;   /* vertical if column; horizontal if row */
-        align-items: center;       /* horizontal if column; vertical if row */
-        text-align: center;        /* makes multi-line text centered */
-        min-height: 80px;          /* give it some height so vertical centering is visible */
-        margin: 0;                 /* margin doesn't center the content, only the box itself */
+        justify-content: center;  /* vertical if column */
+        align-items: center;      /* horizontal if column */
+        text-align: center;
+        min-height: 80px;
+        margin: 0;
+    }
+
+    /* Compact Top Ten: hide airport NAME, show only CITY */
+    #topDestinations .airport-name,
+    #topOrigins .airport-name {
+        display: none;
+    }
+
+    #topDestinations .airport-city::before,
+    #topOrigins .airport-city::before {
+        content: "";
+    }
+
+
+    /* Optional: adjust spacing so “, City” reads nicely after IATA */
+    #topDestinations .airport-city,
+    #topOrigins .airport-city {
+        margin-left: 6px;
     }
 }
 
+
 @media (min-width: 1000px) {
-    .container{
+    .container {
         width: 1200px;
         margin: 0 auto;
         background-color: #e0efef;
         padding: 2rem;
 
     }
-    #title{
+
+    #title {
         display: flex;
         flex-direction: column;
     }
 
-    body{
+    body {
         margin: 0 auto;
         width: 90%;
     }
+
+    #topDestinations .airport-city::before,
+    #topOrigins .airport-city::before {
+        content: ", ";
+
+    }
+
+
 }
 
 form { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
@@ -73,4 +103,57 @@ ul, ol { margin: 0; padding-left: 18px; }
     text-align: center;
 }
 
+/* Top10 list layout */
+#topDestinations,
+#topOrigins {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
 
+.top10-row {
+    display: grid;
+    grid-template-columns: 1fr auto;  /* left flex column + right count column */
+    gap: 12px;
+    padding: 8px 10px;
+    border-bottom: 1px solid #e1e4e8;
+    align-items: center;
+}
+
+/* Header row */
+.top10-header {
+    font-weight: 600;
+    background: #f6f8fa;
+    border-top: 1px solid #e1e4e8;
+}
+
+/* Left column (IATA + airport name) */
+.col-airport {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;                /* allow text to ellipsize */
+}
+
+/* Bold IATA code */
+.iata {
+    font-weight: 700;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+}
+
+/* Airport title text */
+.airport-title {
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Right column (flight count) */
+.col-count {
+    text-align: right;
+    min-width: 56px;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+}

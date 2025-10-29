@@ -65,6 +65,13 @@ const topOrigins = document.getElementById("topOrigins");
     dateInput.placeholder = `${dateToString(minDate)} to ${dateToString(yesterday)}`;
 })();
 
+
+if (dateInput) {
+    dateInput.addEventListener("focus", clearStatistics);
+    dateInput.addEventListener("click", clearStatistics);
+}
+
+
 // ---------- Load iata.json and build an index (array format) ----------
 let iataIndex = null;
 /**
@@ -239,6 +246,18 @@ function clearNode(node) {
     while (node.firstChild) node.removeChild(node.firstChild);
 }
 
+function clearStatistics() {
+    if (resultsSection) resultsSection.classList.add("hidden");
+    if (reportHeader) reportHeader.textContent = "";
+    if (departureSummaryList) clearNode(departureSummaryList);
+    if (arrivalSummaryList) clearNode(arrivalSummaryList);
+    if (depHistogram) clearNode(depHistogram);
+    if (arrHistogram) clearNode(arrHistogram);
+    if (topDestinations) clearNode(topDestinations);
+    if (topOrigins) clearNode(topOrigins);
+}
+
+
 // Render the departure-only summary (no special cases here)
 function renderDepartureSummary(
     listNode,
@@ -253,7 +272,6 @@ function renderDepartureSummary(
     })();
 
     const items = [
-        `Dataset date: ${dateISO}`,
         `Total flights: ${depCount}`,
         `Destinations: ${depUnique}`,
         `Special cases: ${specialCasesText}`, // <-- inline summary
@@ -281,7 +299,6 @@ function renderArrivalSummary(
     })();
 
     const items = [
-        `Dataset date: ${dateISO}`,
         `Total flights: ${arrCount}`,
         `Origins: ${arrUnique}`,
         `Special cases: ${specialCasesText}`, // <-- as requested
@@ -341,21 +358,65 @@ function renderHistogram(container, bins, labelOrder) {
 
 function renderTop10(listNode, entries, iataIndex) {
     clearNode(listNode);
-    if (entries.length === 0) {
+
+    if (!entries || entries.length === 0) {
         const li = document.createElement("li");
         li.textContent = "No data";
         listNode.appendChild(li);
         return;
     }
+
+    // Header row
+    const header = document.createElement("li");
+    header.className = "top10-row top10-header";
+    const hAirport = document.createElement("div");
+    hAirport.className = "col-airport";
+    hAirport.textContent = "Airport";
+    const hCount = document.createElement("div");
+    hCount.className = "col-count";
+    hCount.textContent = "No. of flights";
+    header.appendChild(hAirport);
+    header.appendChild(hCount);
+    listNode.appendChild(header);
+
+    // Data rows
     for (const [code, count] of entries) {
-        const meta = iataIndex?.[code] || null;
+        const meta = (iataIndex && iataIndex[code]) || null;
         const name = meta?.name || "Unknown airport";
         const city = meta?.municipality || "Unknown city";
+
         const li = document.createElement("li");
-        li.textContent = `${code} — ${name}, ${city} (${count})`;
+        li.className = "top10-row";
+
+        const colAirport = document.createElement("div");
+        colAirport.className = "col-airport";
+
+        const iata = document.createElement("strong");
+        iata.className = "iata";
+        iata.textContent = code;
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "airport-name";
+        nameSpan.textContent = ` ${name}`;
+
+        const citySpan = document.createElement("span");
+        citySpan.className = "airport-city";
+        citySpan.textContent = `${city}`;
+
+        colAirport.appendChild(iata);
+        colAirport.appendChild(nameSpan);
+        colAirport.appendChild(citySpan);
+
+        const colCount = document.createElement("div");
+        colCount.className = "col-count";
+        colCount.textContent = String(count);
+
+        li.appendChild(colAirport);
+        li.appendChild(colCount);
         listNode.appendChild(li);
     }
 }
+
 
 // ---------- Alerts ----------
 function showAlert(msg) { alertBox.textContent = msg; }
@@ -529,5 +590,6 @@ form.addEventListener("submit", async (ev) => {
         console.error(err);
         showAlert(err?.message || "Failed to load data. Please try again later.");
     }
+    resultsSection.classList.remove("hidden");
 });
 ``
