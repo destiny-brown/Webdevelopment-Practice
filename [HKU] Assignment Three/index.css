@@ -1,0 +1,67 @@
+/* index.css */
+
+/* Outer container */
+#outmost {
+    width: 1000px;
+    margin: 1rem auto 0; /* top: 1rem, horizontal: auto, bottom: 0 */
+}
+
+/* Dashboard container */
+#container {
+    width: 100%;
+    padding: 30px 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    background-color: #f9f9f9; /* light gray background */
+    border: 1px dashed #ccc;   /* subtle border */
+}
+
+/* Financial blocks */
+.fin-block {
+    flex: 0 1 45%; /* roughly two per row */
+    margin: 12px;
+}
+
+/* Hidden blocks */
+.invisible {
+    display: none;
+}
+
+/* Customization mode look (red dashed border) */
+.fin-block.editing {
+    border: 1px dashed red;
+    padding: 6px;
+    position: relative;
+}
+
+/* Customize button */
+.custom-btn {
+    float: right;
+    margin: .5rem 0;
+    padding: .25rem .6rem;
+    border: 1px solid #c77;
+    background: #f6e7e7;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Eye button (top-right corner) */
+.fin-block .eye-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    border: 1px solid #bbb;
+    background: #fff;
+    padding: 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Eye icon inside button */
+.eye-btn img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
