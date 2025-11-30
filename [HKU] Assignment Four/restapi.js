@@ -46,6 +46,61 @@ var weatherDatabase = new Schema({
 //Create my model
 var myWeather = mongoose.model("dailydata", weatherDatabase);
 
+//Task B
+
+app.get('/HKO/weather/:year/:month/:day', async (req, res) => {
+    const { year, month, day } = req.params;
+
+    // Convert to integers
+    const y = parseInt(year, 10);
+    const m = parseInt(month, 10);
+    const d = parseInt(day, 10);
+
+    // Validate numeric ranges
+    if (isNaN(y) || isNaN(m) || isNaN(d) || y < 1000 || m < 1 || m > 12 || d < 1 || d > 31) {
+        return res.status(400).json({ error: "not a valid year/month/date" });
+    }
+
+    // Validate actual date (e.g., no Feb 30)
+    const dateObj = new Date(y, m - 1, d);
+    if (dateObj.getFullYear() !== y || dateObj.getMonth() !== m - 1 || dateObj.getDate() !== d) {
+        return res.status(400).json({ error: "not a valid year/month/date" });
+    }
+
+    try {
+        // Normalize date format as stored in DB (e.g., "YYYY/MM/DD")
+        const dateString = `${y}/${m}/${d}`;
+
+        const weatherData = await myWeather.findOne({ Date: dateString });
+
+        if (!weatherData) {
+            return res.status(404).json({ error: "not found" });
+        }
+
+        
+ const rainfallValue = weatherData.Rainfall === 0.01 ? "Trace" : weatherData.Rainfall;
+
+        const responseData = {
+            "Year": y,
+            "Month": m,
+            "Date": d,
+            "Avg Temp": weatherData.MeanT,
+            "Max Temp": weatherData.MaxT,
+            "Min Temp": weatherData.MinT,
+            "Humidity": weatherData.Humidity,
+            "Rainfall": rainfallValue
+        };
+
+        return res.status(200).json(responseData);
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "system error" });
+    }
+});
+
+//Task C
+
 // error handler
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
