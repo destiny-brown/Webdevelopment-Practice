@@ -251,9 +251,14 @@ app.post(['/HKO/weather/:year/:month/:day' ], async (req, res) => {
         return res.status(500).json({ error: "system error" });
     }
 
-
-
     });
+
+//Task E
+app.use((req, res) => {
+  res.status(400).json({ error: `Cannot ${req.method} ${req.originalUrl}` });
+});
+
+
 
 // error handler
 app.use(function(err, req, res, next) {
