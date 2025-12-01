@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+app.use(express.json())
 
     /* Implement the logic here */
 //Connect to Mongodb
@@ -46,6 +47,12 @@ var weatherDatabase = new Schema({
 //Create my model
 var myWeather = mongoose.model("dailydata", weatherDatabase);
 
+
+// helpers for HKO date format (DD/MM/YYYY)
+function pad2(n){ return n.toString().padStart(2,'0'); }
+function toHkoDateString(y,m,d){ return `${pad2(d)}/${pad2(m)}/${y}`; }
+
+
 //Task B
 
 app.get('/HKO/weather/:year/:month/:day', async (req, res) => {
@@ -69,7 +76,7 @@ app.get('/HKO/weather/:year/:month/:day', async (req, res) => {
 
     try {
         // Normalize date format as stored in DB (e.g., "YYYY/MM/DD")
-        const dateString = `${y}/${m}/${d}`;
+        const dateString = toHkoDateString(y, m, d)
 
         const weatherData = await myWeather.findOne({ Date: dateString });
 
@@ -100,99 +107,80 @@ app.get('/HKO/weather/:year/:month/:day', async (req, res) => {
 });
 
 //Task C
-app.get(['/HKO/weather/:year/:month/:temperature', '/HKO/weather/:year/:month/:humidity','/HKO/weather/:year/:month/:rainfall',
-    '/HKO/weather/:year/:month', '/HKO/weather/:year/:month/' ], async (req, res) => {
-    const { year, month} = req.params;
 
-    // Convert to integers
-    const y = parseInt(year, 10);
-    const m = parseInt(month, 10);
+function validateYM(y,m){ return !(isNaN(y)||isNaN(m)||y<1000||m<1||m>12); }
+async function getMonthRecords(y,m){
+  const monthRegex = new RegExp(`^\\d{2}/${pad2(m)}/${y}$`); // records like DD/MM/YYYY
+  return myWeather.find({ Date: { $regex: monthRegex } });
+}
+function summarize(records){
+  let sumMeanT=0, maxT=-Infinity, minT=Infinity;
+  let sumHumidity=0, maxHumidity=-Infinity, minHumidity=Infinity;
+  let sumRainfall=0, maxRainfall=-Infinity;
+  records.forEach(r=>{
+    sumMeanT += r.MeanT; maxT = Math.max(maxT, r.MaxT); minT = Math.min(minT, r.MinT);
+    sumHumidity += r.Humidity; maxHumidity = Math.max(maxHumidity, r.Humidity); minHumidity = Math.min(minHumidity, r.Humidity);
+    const rainfallVal = r.Rainfall === 0.01 ? 0.01 : r.Rainfall; // keep trace as 0.01 for averaging
+    sumRainfall += rainfallVal; maxRainfall = Math.max(maxRainfall, rainfallVal);
+  });
+  const count = records.length;
+  return {
+    avgTemp: +(sumMeanT / count).toFixed(2),
+    maxT, minT,
+    avgHumidity: +(sumHumidity / count).toFixed(2),
+    maxHumidity, minHumidity,
+    avgRainfall: +(sumRainfall / count).toFixed(2),
+    maxDailyRainfall: maxRainfall
+  };
+}
 
-    if (isNaN(y) || isNaN(m) || y < 1000 || m < 1 || m > 12) {
-        return res.status(400).json({ error: "not a valid year/month" });
-    }
-    
-    try {
-        // Fetch all records for the month
-        const regex = new RegExp(`^${y}/${m}/`); // Matches YYYY/MM/DD
-        const records = await myWeather.find({ Date: { $regex: regex } });
+app.get('/HKO/weather/:year/:month/temperature', async (req,res)=>{
+  const y = +req.params.year, m = +req.params.month;
+  if(!validateYM(y,m)) return res.status(400).json({error:"not a valid year/month"});
+  try{
+    const records = await getMonthRecords(y,m);
+    if(!records || records.length===0) return res.status(404).json({error:"not found"});
+    const s = summarize(records);
+    return res.status(200).json({ Year:y, Month:m, "Avg Temp": s.avgTemp, "Max Temp": s.maxT, "Min Temp": s.minT });
+  }catch(err){ console.error(err); return res.status(500).json({error:"system error"}); }
+});
 
-        if (!records || records.length === 0) {
-            return res.status(404).json({ error: "not found" });
-        }
-    
-    
-// Initialize accumulators
-        let sumMeanT = 0, maxT = -Infinity, minT = Infinity;
-        let sumHumidity = 0, maxHumidity = -Infinity, minHumidity = Infinity;
-        let sumRainfall = 0, maxRainfall = -Infinity;
+app.get('/HKO/weather/:year/:month/humidity', async (req,res)=>{
+  const y = +req.params.year, m = +req.params.month;
+  if(!validateYM(y,m)) return res.status(400).json({error:"not a valid year/month"});
+  try{
+    const records = await getMonthRecords(y,m);
+    if(!records || records.length===0) return res.status(404).json({error:"not found"});
+    const s = summarize(records);
+    return res.status(200).json({ Year:y, Month:m, "Avg Humidity": s.avgHumidity, "Max Humidity": s.maxHumidity, "Min Humidity": s.minHumidity });
+  }catch(err){ console.error(err); return res.status(500).json({error:"system error"}); }
+});
 
-        records.forEach(r => {
-            sumMeanT += r.MeanT;
-            if (r.MaxT > maxT) maxT = r.MaxT;
-            if (r.MinT < minT) minT = r.MinT;
+app.get('/HKO/weather/:year/:month/rainfall', async (req,res)=>{
+  const y = +req.params.year, m = +req.params.month;
+  if(!validateYM(y,m)) return res.status(400).json({error:"not a valid year/month"});
+  try{
+    const records = await getMonthRecords(y,m);
+    if(!records || records.length===0) return res.status(404).json({error:"not found"});
+    const s = summarize(records);
+    return res.status(200).json({ Year:y, Month:m, "Avg Rainfall": s.avgRainfall, "Max Daily Rainfall": s.maxDailyRainfall });
+  }catch(err){ console.error(err); return res.status(500).json({error:"system error"}); }
+});
 
-            sumHumidity += r.Humidity;
-            if (r.Humidity > maxHumidity) maxHumidity = r.Humidity;
-            if (r.Humidity < minHumidity) minHumidity = r.Humidity;
-
-            const rainfallVal = r.Rainfall === 0.01 ? 0.01 : r.Rainfall;
-            sumRainfall += rainfallVal;
-            if (rainfallVal > maxRainfall) maxRainfall = rainfallVal;
-        });
-
-        const count = records.length;
-        const avgTemp = (sumMeanT / count).toFixed(2);
-        const avgHumidity = (sumHumidity / count).toFixed(2);
-        const avgRainfall = (sumRainfall / count).toFixed(2);
-
-        let responseData;
-
-        if (req.path.endsWith('/temperature')) {
-            responseData = {
-                Year: y,
-                Month: m,
-                "Avg Temp": parseFloat(avgTemp),
-                "Max Temp": maxT,
-                "Min Temp": minT
-            };
-        } else if (req.path.endsWith('/humidity')) {
-            responseData = {
-                Year: y,
-                Month: m,
-                "Avg Humidity": parseFloat(avgHumidity),
-                "Max Humidity": maxHumidity,
-                "Min Humidity": minHumidity
-            };
-        } else if (req.path.endsWith('/rainfall')) {
-            responseData = {
-                Year: y,
-                Month: m,
-                "Avg Rainfall": parseFloat(avgRainfall),
-                "Max Daily Rainfall": maxRainfall
-            };
-        } else {
-            responseData = {
-                Year: y,
-                Month: m,
-                "Avg Temp": parseFloat(avgTemp),
-                "Max Temp": maxT,
-                "Min Temp": minT,
-                "Avg Humidity": parseFloat(avgHumidity),
-                "Max Humidity": maxHumidity,
-                "Min Humidity": minHumidity,
-                "Avg Rainfall": parseFloat(avgRainfall),
-                "Max Daily Rainfall": maxRainfall
-            };
-        }
-
-        return res.status(200).json(responseData);
-
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ error: "system error" });
-    }
+app.get(['/HKO/weather/:year/:month', '/HKO/weather/:year/:month/'], async (req,res)=>{
+  const y = +req.params.year, m = +req.params.month;
+  if(!validateYM(y,m)) return res.status(400).json({error:"not a valid year/month"});
+  try{
+    const records = await getMonthRecords(y,m);
+    if(!records || records.length===0) return res.status(404).json({error:"not found"});
+    const s = summarize(records);
+    return res.status(200).json({
+      Year:y, Month:m,
+      "Avg Temp": s.avgTemp, "Max Temp": s.maxT, "Min Temp": s.minT,
+      "Avg Humidity": s.avgHumidity, "Max Humidity": s.maxHumidity, "Min Humidity": s.minHumidity,
+      "Avg Rainfall": s.avgRainfall, "Max Daily Rainfall": s.maxDailyRainfall
+    });
+  }catch(err){ console.error(err); return res.status(500).json({error:"system error"}); }
 });
 
 
@@ -218,7 +206,7 @@ app.post(['/HKO/weather/:year/:month/:day' ], async (req, res) => {
 
     try {
         // Normalize date format as stored in DB (e.g., "YYYY/MM/DD")
-        const dateString = `${y}/${m}/${d}`;
+        const dateString = toHkoDateString(y, m, d);
 
         const recordExists = await myWeather.findOne({ Date: dateString });
 
