@@ -195,6 +195,66 @@ app.get(['/HKO/weather/:year/:month/:temperature', '/HKO/weather/:year/:month/:h
     }
 });
 
+
+//Task D
+app.post(['/HKO/weather/:year/:month/:day' ], async (req, res) => {
+    const { year, month, day } = req.params;
+
+    // Convert to integers
+    const y = parseInt(year, 10);
+    const m = parseInt(month, 10);
+    const d = parseInt(day, 10);
+
+    // Validate numeric ranges
+    if (isNaN(y) || isNaN(m) || isNaN(d) || y < 1000 || m < 1 || m > 12 || d < 1 || d > 31) {
+        return res.status(400).json({ error: "not a valid year/month/date" });
+    }
+
+    // Validate actual date (e.g., no Feb 30)
+    const dateObj = new Date(y, m - 1, d);
+    if (dateObj.getFullYear() !== y || dateObj.getMonth() !== m - 1 || dateObj.getDate() !== d) {
+        return res.status(400).json({ error: "not a valid year/month/date" });
+    }
+
+    try {
+        // Normalize date format as stored in DB (e.g., "YYYY/MM/DD")
+        const dateString = `${y}/${m}/${d}`;
+
+        const recordExists = await myWeather.findOne({ Date: dateString });
+
+        if (recordExists) {
+            return res.status(403).json({ error: "find an existing record.Cannot override!!" });
+        }
+
+        
+// Create new record from request body
+        const { MeanT, MaxT, MinT, Humidity, Rainfall } = req.body;
+
+// Validate required fields
+        if (MeanT === undefined || MaxT === undefined || MinT === undefined || Humidity === undefined || Rainfall === undefined) {
+            return res.status(400).json({ error: "missing required weather data fields" });
+        }
+
+        const newRecord = new myWeather({
+            Date: dateString,
+            MeanT,
+            MaxT,
+            MinT,
+            Humidity,
+            Rainfall
+        });
+
+        await newRecord.save();
+        return res.status(200).json({ okay: "record added" });
+    }catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "system error" });
+    }
+
+
+
+    });
+
 // error handler
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
