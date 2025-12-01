@@ -100,6 +100,100 @@ app.get('/HKO/weather/:year/:month/:day', async (req, res) => {
 });
 
 //Task C
+app.get(['/HKO/weather/:year/:month/:temperature', '/HKO/weather/:year/:month/:humidity','/HKO/weather/:year/:month/:rainfall',
+    '/HKO/weather/:year/:month', '/HKO/weather/:year/:month/' ], async (req, res) => {
+    const { year, month} = req.params;
+
+    // Convert to integers
+    const y = parseInt(year, 10);
+    const m = parseInt(month, 10);
+
+    if (isNaN(y) || isNaN(m) || y < 1000 || m < 1 || m > 12) {
+        return res.status(400).json({ error: "not a valid year/month" });
+    }
+    
+    try {
+        // Fetch all records for the month
+        const regex = new RegExp(`^${y}/${m}/`); // Matches YYYY/MM/DD
+        const records = await myWeather.find({ Date: { $regex: regex } });
+
+        if (!records || records.length === 0) {
+            return res.status(404).json({ error: "not found" });
+        }
+    
+    
+// Initialize accumulators
+        let sumMeanT = 0, maxT = -Infinity, minT = Infinity;
+        let sumHumidity = 0, maxHumidity = -Infinity, minHumidity = Infinity;
+        let sumRainfall = 0, maxRainfall = -Infinity;
+
+        records.forEach(r => {
+            sumMeanT += r.MeanT;
+            if (r.MaxT > maxT) maxT = r.MaxT;
+            if (r.MinT < minT) minT = r.MinT;
+
+            sumHumidity += r.Humidity;
+            if (r.Humidity > maxHumidity) maxHumidity = r.Humidity;
+            if (r.Humidity < minHumidity) minHumidity = r.Humidity;
+
+            const rainfallVal = r.Rainfall === 0.01 ? 0.01 : r.Rainfall;
+            sumRainfall += rainfallVal;
+            if (rainfallVal > maxRainfall) maxRainfall = rainfallVal;
+        });
+
+        const count = records.length;
+        const avgTemp = (sumMeanT / count).toFixed(2);
+        const avgHumidity = (sumHumidity / count).toFixed(2);
+        const avgRainfall = (sumRainfall / count).toFixed(2);
+
+        let responseData;
+
+        if (req.path.endsWith('/temperature')) {
+            responseData = {
+                Year: y,
+                Month: m,
+                "Avg Temp": parseFloat(avgTemp),
+                "Max Temp": maxT,
+                "Min Temp": minT
+            };
+        } else if (req.path.endsWith('/humidity')) {
+            responseData = {
+                Year: y,
+                Month: m,
+                "Avg Humidity": parseFloat(avgHumidity),
+                "Max Humidity": maxHumidity,
+                "Min Humidity": minHumidity
+            };
+        } else if (req.path.endsWith('/rainfall')) {
+            responseData = {
+                Year: y,
+                Month: m,
+                "Avg Rainfall": parseFloat(avgRainfall),
+                "Max Daily Rainfall": maxRainfall
+            };
+        } else {
+            responseData = {
+                Year: y,
+                Month: m,
+                "Avg Temp": parseFloat(avgTemp),
+                "Max Temp": maxT,
+                "Min Temp": minT,
+                "Avg Humidity": parseFloat(avgHumidity),
+                "Max Humidity": maxHumidity,
+                "Min Humidity": minHumidity,
+                "Avg Rainfall": parseFloat(avgRainfall),
+                "Max Daily Rainfall": maxRainfall
+            };
+        }
+
+        return res.status(200).json(responseData);
+
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "system error" });
+    }
+});
 
 // error handler
 app.use(function(err, req, res, next) {
