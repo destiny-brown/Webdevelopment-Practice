@@ -1,0 +1,151 @@
+<html><head><meta name="emotion-insertion-point" content="">
+  <meta charset="UTF-8">
+</head>
+
+<!-- ----------------Geolocation code ----------------->
+<body>
+  <button onclick="getloc();">Get Current Location Data</button>
+  <div id="show">To be replaced</div>
+  
+  <script>
+      function getloc() {
+        var output = document.getElementById("show");       
+      
+        if (!navigator.geolocation){
+          output.innerHTML = "<p>Geolocation is not supported by your browser</p>";
+          return;
+        }
+      
+        function success(position) {
+          var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };     
+          output.innerHTML = '<p>Latitude is ' + pos.lat + '° <br>Longitude is ' + pos.lng + '°</p>';         
+        }
+      
+        function error() {
+          output.innerHTML = "Unable to retrieve your location";
+        }
+
+        navigator.geolocation.getCurrentPosition(success, error);
+        
+      }      
+  
+  </script>
+
+<div id="quick-start-container"></div>
+
+
+<h1>HTML5 Canvas</h1>
+<h2>The textAlign Property</h2>
+
+<canvas id="myCanvas" width="300" height="200" style="border:1px solid grey"></canvas>
+
+<script>
+const c = document.getElementById("myCanvas");
+const ctx = c.getContext("2d");
+
+// Create a red line in position 150
+ctx.strokeStyle = "red";
+ctx.moveTo(150, 20);
+ctx.lineTo(150, 170);
+ctx.stroke();
+
+ctx.font = "15px Arial";  
+
+// Show the different textAlign values
+ctx.textAlign = "start";    
+ctx.fillText("textAlign=start", 150, 60);    
+ctx.textAlign = "end";    
+ctx.fillText("textAlign=end", 150, 80);          
+ctx.textAlign = "left";    
+ctx.fillText("textAlign=left", 150, 100);
+ctx.textAlign = "center";   
+ctx.fillText("textAlign=center",150, 120);        
+ctx.textAlign = "right";    
+ctx.fillText("textAlign=right",150, 140);
+</script>
+
+<!-- DOM Methods with audio and video -->
+<body>
+
+<video width="640" height="480" poster="Jasper.jpg" controls="">
+  <source src="Jasper.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+<div>
+  <button id="pause" style="display: none;">Pause</button>
+  <button id="cont" style="display: none;">Continue</button>
+</div>
+<script>
+  vid = document.querySelector("video");
+  pause = document.getElementById("pause");
+  cont = document.getElementById("cont");
+  pause.addEventListener("click", () => {
+    vid.pause();
+    pause.style.display = "none";
+    cont.style.display = "initial";
+  });
+  cont.addEventListener("click", () => {
+    vid.play();
+    cont.style.display = "none";
+    pause.style.display = "initial";
+  });
+  vid.addEventListener("play", () => {
+    pause.style.display = "initial";
+    cont.style.display = "none";
+  });
+  vid.addEventListener("pause", () => {
+    pause.style.display = "none";
+    cont.style.display = "initial";
+  });
+</script>
+
+<div id="quick-start-container"></div></body>
+
+
+<!-- React -->
+<body>
+    <!-- This is the place where your React element is rendered -->
+    <div id="myroot"><div><p>You clicked 0 times</p><button>Click me</button></div></div>
+
+    <!-- This contains your React code -->
+    <script type="text/babel">
+      let count = 0;
+      function Example() {
+        //let count = 0;
+      
+        return (
+          <div>
+            <p>You clicked {count} times</p>
+            <button onClick={() => {console.log(count); count += 1}}>
+              Click me
+            </button>
+          </div>
+        );
+      }
+      
+      const element = <Example />;
+      const root = ReactDOM.createRoot(document.getElementById('myroot'));
+      root.render(element);
+    </script>
+    <!--
+      Note: this page is a great way to try React but it's not suitable for production.
+      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+      Read this section for a production-ready setup with JSX:
+      https://reactjs.org/docs/add-react-to-a-website.html#add-jsx-to-a-project
+
+      In a larger project, you can use an integrated toolchain that includes JSX instead:
+      https://reactjs.org/docs/create-a-new-react-app.html
+
+      You can also use React without JSX, in which case you can remove Babel:
+      https://reactjs.org/docs/react-without-jsx.html
+    -->
+  
+
+<div id="quick-start-container"></div></body>
+
+</body>
+</html>
