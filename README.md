@@ -2,6 +2,8 @@
 
 A collection of web development learning projects, tutorials, and university assignments covering front-end and full-stack development.
 
+> **⚠️ Disclaimer:** This repository contains personal and private work created solely by me (destiny-brown). All content, code, and materials in this repository are my own intellectual property. **Do not copy, reproduce, or distribute any part of this work without explicit permission.**
+
 ## Table of Contents
 
 - [Overview](#overview)
